@@ -35,13 +35,6 @@ class AccountPayment(models.Model):
         return super().create(vals)
 
     def post(self):
-        if len(self.mapped("operating_unit_id")) != 1:
-            raise UserError(
-                _(
-                    "The payment cannot be processed because "
-                    "the operating units are different!"
-                )
-            )
         for rec in self:
             ou_id = rec.operating_unit_id
             if ou_id:
