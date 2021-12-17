@@ -18,7 +18,7 @@ class AccountMoveLine(models.Model):
         for vals in vals_list:
             if vals.get("move_id", False):
                 move = self.env["account.move"].browse(vals["move_id"])
-                if move.operating_unit_id:
+                if move.operating_unit_id and not vals["operating_unit_id"]:
                     vals["operating_unit_id"] = move.operating_unit_id.id
         return super().create(vals_list)
 
@@ -48,22 +48,22 @@ class AccountMoveLine(models.Model):
                     )
                 )
 
-    @api.constrains("operating_unit_id", "move_id")
-    def _check_move_operating_unit(self):
-        for rec in self:
-            if (
-                rec.move_id
-                and rec.move_id.operating_unit_id
-                and rec.operating_unit_id
-                and rec.move_id.operating_unit_id != rec.operating_unit_id
-            ):
-                raise UserError(
-                    _(
-                        "Configuration error. The Operating Unit in"
-                        " the Move Line and in the Move must be the"
-                        " same."
-                    )
-                )
+    # @api.constrains("operating_unit_id", "move_id")
+    # def _check_move_operating_unit(self):
+    #     for rec in self:
+    #         if (
+    #             rec.move_id
+    #             and rec.move_id.operating_unit_id
+    #             and rec.operating_unit_id
+    #             and rec.move_id.operating_unit_id != rec.operating_unit_id
+    #         ):
+    #             raise UserError(
+    #                 _(
+    #                     "Configuration error. The Operating Unit in"
+    #                     " the Move Line and in the Move must be the"
+    #                     " same."
+    #                 )
+    #             )
 
 
 class AccountMove(models.Model):
